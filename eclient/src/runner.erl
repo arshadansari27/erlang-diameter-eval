@@ -53,8 +53,8 @@ recurse({Ok, Er}) ->
 	{R, _} = client:call(),
 	if 
 		R == 'ok' ->
-			recurse({Ok + 1, Er});
+			{Ok2, Er2} = {Ok + 1, Er};
 		true ->
-			%io:format("[Ok, Err] ~p, ~p\n", [Ok, Er]),
-			recurse({Ok, Er + 1})
-	end.
+			{Ok2, Er2} = {Ok, Er + 1}
+	end,
+	recurse({Ok2, Er2}).
