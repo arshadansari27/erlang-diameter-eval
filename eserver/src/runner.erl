@@ -13,7 +13,8 @@ run() ->
 	server:start(),
 	server:listen([tcp]),
 	{ok, LogFile} = file:open('output.log', write),
-	spawn(fun() -> print_counts(0, LogFile) end).
+	spawn(fun() -> print_counts(0, LogFile) end),
+	spawn(fun() -> print_process_count() end).
 
 
 print_counts(N, LogFile) ->
@@ -28,3 +29,9 @@ print_counts(N, LogFile) ->
 	Client_count = other_counter:get(Client_counter),
 	io:format(LogFile, "~p\t~p\t~p\t~p\t~p\t~p\n", [N, Client_count, Count, Avg, Ok_count, Err_count]),
 	print_counts(N + 1, LogFile).
+
+
+print_process_count() ->
+	timer:sleep((5000)),
+	io:format("C: [~p]\n", [length(erlang:processes())]),
+	print_process_count().

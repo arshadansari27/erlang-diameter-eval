@@ -21,7 +21,7 @@ one_client()  ->
 	io:format("~p \n", [Uv]),
 	timer:sleep(1000),
 	Self = self(),
-	Pids = [spawn_link(fun() -> Self ! {self(), {Y, run_client()}} end) || Y <- lists:seq(1, 10)],
+	Pids = [spawn_link(fun() -> Self ! {self(), {Y, run_client()}} end) || Y <- lists:seq(1, 4)],
 	print_pids(Pids),
 	spawn(fun() -> my_stop(Pids, Tstart) end).
 
