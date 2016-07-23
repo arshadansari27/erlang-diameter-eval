@@ -21,7 +21,7 @@ one_client()  ->
 	io:format("~p \n", [Uv]),
 	timer:sleep(1000),
 	Self = self(),
-	Pids = [spawn_link(fun() -> Self ! {self(), {Y, run_client()}} end) || Y <- lists:seq(1, 4)],
+	Pids = [spawn_link(fun() -> Self ! {self(), {Y, run_client()}} end) || Y <- lists:seq(1, 5)],
 	print_pids(Pids),
 	spawn(fun() -> my_stop(Pids, Tstart) end).
 
@@ -50,6 +50,7 @@ run_client() ->
 	recurse({0, 0}).
 	
 recurse({Ok, Er}) ->
+	timer:sleep(100),
 	{R, _} = client:call(),
 	if 
 		R == 'ok' ->

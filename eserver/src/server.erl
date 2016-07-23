@@ -15,7 +15,7 @@
 %% The service configuration. In a server supporting multiple Diameter
 %% applications each application may have its own, although they could all
 %% be configured with a common callback module.
--define(SERVICE(Name), [{'Origin-Host', atom_to_list(Name) ++ ".example.com"},
+-define(SERVICE(Name), [{'Origin-Host', "arshad.example.com"},
                         {'Origin-Realm', "example.com"},
                         {'Vendor-Id', 193},
                         {'Product-Name', "Server"},
