@@ -4,7 +4,7 @@
 
 run() ->
 	Self = self(),
-	Count = 1000,
+	Count = 5000,
 	ets:new(my_table2, [named_table, protected, set, {keypos, 1}]),
 	ets:insert(my_table2, {counter2, counter:new()}),
 	diameter:start(),
@@ -44,5 +44,3 @@ print_counts(N) ->
 	Val = counter:get(Counter),
 	io:format("~p\t~p\n", [N, Val]),
 	print_counts(N + 1).
-
-
