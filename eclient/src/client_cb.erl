@@ -79,15 +79,15 @@ prepare_retransmit(Packet, SvcName, Peer) ->
 %% handle_answer/4
 
 handle_answer(#diameter_packet{msg = Msg}, _Request, _SvcName, _Peer) ->
-	[{_, Counter}] = ets:lookup(my_table2, counter2),
-	counter:inc(Counter),
+	[{_, Ok_counter}] = ets:lookup(my_table2, ok_counter),
+	counter:inc(Ok_counter),
     {ok, Msg}.
 
 %% handle_error/4
 
 handle_error(Reason, _Request, _SvcName, _Peer) ->
-	[{_, Counter}] = ets:lookup(my_table2, counter2),
-	counter:inc(Counter),
+	[{_, Err_counter}] = ets:lookup(my_table2, err_counter),
+	counter:inc(Err_counter),
     {error, Reason}.
 
 %% handle_request/3
