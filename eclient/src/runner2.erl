@@ -4,7 +4,7 @@
 
 run() ->
 	Self = self(),
-	Count = 100,
+	Count = 10000,
 	diameter:start(),
 	client:start(),
 	Uv = client:connect(tcp),
@@ -25,6 +25,7 @@ recurse(Count, {Ok, Er}) when Count == 0 ->
 	ok;
 	
 recurse(Count, {Ok, Er}) ->
+	timer:sleep(1),
 	{R, _} = client:call(),
 	if 
 		R == 'ok' ->

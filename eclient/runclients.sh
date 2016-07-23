@@ -4,10 +4,10 @@
 
 i="0"
 
-while [ $i -lt 4 ]
-do
-	echo 'Something'
-	i=$[$i+1]
-done
+#while [ $i -lt 4 ]
+#do
+	#echo 'Something'
+	#i=$[$i+1]
+#done
 
-erl -pa ebin --noshell -run runner2 run &
+erl -pa ebin --noshell -run runner2 run 
