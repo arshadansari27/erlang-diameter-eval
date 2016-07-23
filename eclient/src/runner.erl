@@ -3,6 +3,8 @@
 -export([run/0, stop_client/1]).
 
 run() ->
+	ets:new(my_table, [named_table, protected, set, {keypos, 1}]),
+	ets:insert(my_table, {counter, counter:new()}),
 	one_client().
 
 print_pids([Pid|Rest]) ->
