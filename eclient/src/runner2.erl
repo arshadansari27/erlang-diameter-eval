@@ -4,7 +4,7 @@
 
 run() ->
 	Self = self(),
-	Count = 10000,
+	Count = 1000,
 	diameter:start(),
 	client:start(),
 	Uv = client:connect(tcp),
