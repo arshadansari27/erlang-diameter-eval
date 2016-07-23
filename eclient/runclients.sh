@@ -10,4 +10,4 @@ do
 	i=$[$i+1]
 done
 
-erl -pa ebin -run runner2 run &
+erl -pa ebin --noshell -run runner2 run &

@@ -55,6 +55,8 @@ handle_request(#diameter_packet{msg = Req, errors = []}, _SvcName, {_, Caps})
 	counter:inc(Counter),
 	[{_, Ok_counter}] = ets:lookup(my_table, ok),
 	other_counter:inc(Ok_counter),
+	[{_, Per_sec_counter}] = ets:lookup(my_table, persec),
+	other_counter:inc(Per_sec_counter),
     {reply, #diameter_base_RAA{'Result-Code' = rc(Type),
                                'Origin-Host' = OH,
                                'Origin-Realm' = OR,
@@ -74,6 +76,8 @@ handle_request(#diameter_packet{msg = Req}, _SvcName, {_, Caps})
 	counter:inc(Counter),
 	[{_, Err_counter}] = ets:lookup(my_table, err),
 	other_counter:inc(Err_counter),
+	[{_, Per_sec_counter}] = ets:lookup(my_table, persec),
+	other_counter:inc(Per_sec_counter),
     {reply, #diameter_base_RAA{'Origin-Host' = OH,
                                'Origin-Realm' = OR,
                                'Session-Id' = Id}};
