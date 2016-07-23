@@ -65,7 +65,7 @@
 %% The service configuration. As in the server example, a client
 %% supporting multiple Diameter applications may or may not want to
 %% configure a common callback module on all applications.
--define(SERVICE(Name), [{'Origin-Host', ?L(Name) ++ ".example.com"},
+-define(SERVICE(Name), [{'Origin-Host', "arshad.example.com"},
                         {'Origin-Realm', "example.com"},
                         {'Vendor-Id', 0},
                         {'Product-Name', "Client"},
