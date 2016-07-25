@@ -18,7 +18,7 @@
 -define(SERVICE(Name), [{'Origin-Host', "arshad.example.com"},
                         {'Origin-Realm', "example.com"},
                         {'Vendor-Id', 193},
-                        {'Product-Name', "Server"},
+                        {'Product-Name', "Server-Erlang"},
                         {'Auth-Application-Id', [0]},
                         {restrict_connections, false},
                         {string_decode, false},

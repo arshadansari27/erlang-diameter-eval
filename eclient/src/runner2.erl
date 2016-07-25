@@ -5,9 +5,9 @@
 run() ->
 	Self = self(),
 	Count = 5000,
-	ets:new(my_table2, [named_table, protected, set, {keypos, 1}]),
-	ets:insert(my_table2, {ok_counter, counter:new()}),
-	ets:insert(my_table2, {err_counter, counter:new()}),
+	ets:new(mytable2, [named_table, protected, set, {keypos, 1}]),
+	ets:insert(mytable2, {ok, counter:new()}),
+	ets:insert(mytable2, {err, counter:new()}),
 	diameter:start(),
 	client:start(),
 	Uv = client:connect(tcp),
@@ -41,8 +41,8 @@ recurse(Count, {Ok, Er}) ->
 
 print_counts(N) ->
 	timer:sleep((1000)),
-	[{_, Ok_counter}] = ets:lookup(my_table2, ok_counter),
-	[{_, Err_counter}] = ets:lookup(my_table2, err_counter),
+	[{_, Ok_counter}] = ets:lookup(mytable2, ok),
+	[{_, Err_counter}] = ets:lookup(mytable2, err),
 	Ok = counter:get(Ok_counter),
 	Err = counter:get(Err_counter),
 	io:format("~p\t~p\t~p\n", [N, Ok, Err]),

@@ -86,6 +86,7 @@ handle_request(#diameter_packet{msg = Req}, _SvcName, {_, Caps})
 handle_request(#diameter_packet{}, _SvcName, _) ->
     {answer_message, 3001}.  %% DIAMETER_COMMAND_UNSUPPORTED
 
+
 %% Map Re-Auth-Request-Type to Result-Code just for the purpose of
 %% generating different answers.
 
