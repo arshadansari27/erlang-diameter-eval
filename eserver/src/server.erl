@@ -3,7 +3,9 @@
 -export([start/1,    %% start a service
          start/2,    %%
          listen/2,   %% add a listening transport
-         stop/1]).   %% stop a service
+         listen/3,   %% add a listening transport
+         stop/1,
+         handle_info/2]).   %% stop a service
 
 %% Convenience functions using the default service name.
 -export([start/0,
@@ -49,6 +51,9 @@ start(Name, Opts) ->
 
 %% listen/2
 
+listen(T, Port, Type) when Type == custom ->
+    node:listen(?DEF_SVC_NAME, T, Port).
+
 listen(Name, T) ->
     node:listen(Name, T).
 
@@ -62,3 +67,6 @@ stop(Name) ->
 
 stop() ->
     stop(?DEF_SVC_NAME).
+
+handle_info(_, State) ->
+	{noreply, State}.

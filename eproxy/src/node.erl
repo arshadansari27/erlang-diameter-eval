@@ -28,6 +28,7 @@
 -export([start/2,
          listen/2,
          connect/2,
+         connect/3,
          stop/1]).
 
 -type protocol()
@@ -60,8 +61,10 @@
 %% convenience: arbitrary options can be specifed as a
 %% [diameter:transport_opt()].
 
--define(DEFAULT_PORT, 3868).
--define(DEFAULT_PORT2, 3869).
+-define(RELAY_PORT, 3868).
+-define(SERVER_PORT, 3868).
+-define(SERVER_PORT1, 3871).
+-define(SERVER_PORT2, 3872).
 
 %% ---------------------------------------------------------------------------
 %% Interface functions
@@ -75,6 +78,7 @@
 
 start(Name, Opts)
   when is_atom(Name), is_list(Opts) ->
+  	io:format("Starting...~p\n", [Opts]),
     diameter:start_service(Name, Opts).
 
 %% connect/2
@@ -85,6 +89,7 @@ start(Name, Opts)
 
 connect(Name, Opts)
   when is_list(Opts) ->
+  	io:format("Connection Options ~p\n", [{connect, Opts}]),
     diameter:add_transport(Name, {connect, Opts});
 
 connect(Name, {T, Opts}) ->
@@ -92,6 +97,9 @@ connect(Name, {T, Opts}) ->
 
 connect(Name, T) ->
     connect(Name, [{connect_timer, 5000} | client_opts(T)]).
+
+connect(Name, T, SName) ->
+    connect(Name, [{connect_timer, 5000} | client_opts({T, SName ,true})]).
 
 %% listen/2
 
@@ -101,6 +109,7 @@ connect(Name, T) ->
 
 listen(Name, Opts)
   when is_list(Opts) ->
+  	io:format("Listening ~p\n", [Opts]),
     diameter:add_transport(Name, {listen, Opts});
 
 listen(Name, {T, Opts}) ->
@@ -133,7 +142,7 @@ server_opts({T, Addr, Port}) ->
                          {port, Port}]}];
 
 server_opts(T) ->
-    server_opts({T, loopback, ?DEFAULT_PORT}).
+    server_opts({T, loopback, ?RELAY_PORT}).
 
 %% client_opts/1
 %%
@@ -152,11 +161,19 @@ client_opts({T, LA, RA, RP}) ->
                          {reuseaddr, true}
                          | ip(LA)]}];
 
+client_opts({T, S_Port, Multi}) when Multi == true ->
+	Port = case S_Port of 
+		1 -> ?SERVER_PORT1;
+		2 -> ?SERVER_PORT2
+	end,
+    client_opts({T, loopback, remotelocal, Port});
+
+
 client_opts({T, RA, RP}) ->
     client_opts({T, default, RA, RP});
 
 client_opts(T) ->
-    client_opts({T, loopback, loopback, ?DEFAULT_PORT2}).
+    client_opts({T, loopback, loopback, ?SERVER_PORT}).
 
 %% ---------------------------------------------------------------------------
 
@@ -167,10 +184,17 @@ ip(default) ->
     [];
 ip(loopback) ->
     [{ip, {127,0,0,1}}];
+
+ip(remotelocal) ->
+    {172,16,101,146};
+
 ip(Addr) ->
     [{ip, Addr}].
 
 addr(loopback) ->
     {127,0,0,1};
+
+addr(remotelocal) ->
+    {172,16,101,146};
 addr(A) ->
     A.

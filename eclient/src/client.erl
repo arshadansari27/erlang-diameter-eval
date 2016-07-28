@@ -13,12 +13,7 @@
 %% distributed under the License is distributed on an "AS IS" BASIS,
 %% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 %% See the License for the specific language governing permissions and
-%% limitations under the License.
-%%
-%% %CopyrightEnd%
-%%
-
-%%
+%% limitations under the License.  %% %% %CopyrightEnd% %% %%
 %% An example Diameter client that can sends base protocol RAR
 %% requests to a connected peer.
 %%
@@ -39,7 +34,7 @@
 -module(client).
 
 -include_lib("diameter/include/diameter.hrl").
--include_lib("diameter/include/diameter_gen_base_rfc6733.hrl").
+-include_lib("diameter/include/diameter_gen_base_rfc3588.hrl").
 
 -export([start/1,     %% start a service
          start/2,     %%
@@ -65,9 +60,11 @@
 %% The service configuration. As in the server example, a client
 %% supporting multiple Diameter applications may or may not want to
 %% configure a common callback module on all applications.
--define(SERVICE(Name), [{'Origin-Host', "arshad.example.com"},
-                        {'Origin-Realm', "example.com"},
-                        {'Vendor-Id', 0},
+-define(SERVICE(Name), [{'Origin-Host', "first.client.com"},
+                        {'Origin-Realm', "client.com"},
+						%{'Destination-Host', "3871.example.com"},
+                        %{'Destination-Realm', "3871.example.com"},
+                        {'Vendor-Id', 193},
                         {'Product-Name', "Client"},
                         {'Auth-Application-Id', [0]},
                         {string_decode, false},

@@ -51,20 +51,14 @@ peer_down(_SvcName, _Peer, State) ->
 %% resending of the request.
 
 handle_request(_Pkt, _SvcName, _Peer) ->
+	io:format("~p\n", [_Peer]),
     {relay, [{timeout, 1000}, {extra, [relayed]}]}.
 
 %% diameter will filter the sender in the Peers list.
-%pick_peer(Peers, Peers2, _SvcName, _State, relayed) ->
-%	[Peer | _] = Peers,
-%	io:format("[*] Local Peers: ~p\n", [Peers]),
-%	io:format("[*] Remote Peers: ~p\n", [Peers2]),
-%	{ok, Peer}.
-
 pick_peer(Peers, _, _SvcName, _State, relayed) ->
 	[{_, Peer_counter}] = ets:lookup(mytable_relay, peers),
 	Peer_count = other_counter:inc(Peer_counter),
-	Index = (Peer_count rem 2) + 1,
-	% List = lists:map(fun(N) -> {Xs, _} = N, Xs end, Peers),
+	Index = Peer_count rem length(Peers),
 	Peer = lists:nth(Index, Peers),
     {ok, Peer}.
 

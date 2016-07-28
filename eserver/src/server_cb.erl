@@ -1,7 +1,7 @@
 -module(server_cb).
 
 -include_lib("diameter/include/diameter.hrl").
--include_lib("diameter/include/diameter_gen_base_rfc6733.hrl").
+-include_lib("diameter/include/diameter_gen_base_rfc3588.hrl").
 
 %% diameter callbacks
 -export([peer_up/3,

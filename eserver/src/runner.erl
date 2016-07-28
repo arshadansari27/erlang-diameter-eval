@@ -1,8 +1,14 @@
 -module(runner).
 
--export([run/0]).
+-export([run/1, run71/0, run72/0]).
 
-run() ->
+run71() ->
+	run(3871).
+
+run72() ->
+	run(3872).
+
+run(Port) ->
 	ets:new(my_table, [named_table, protected, set, {keypos, 1}]),
 	ets:insert(my_table, {counter, counter:new()}),
 	ets:insert(my_table, {persec, other_counter:new()}),
@@ -11,9 +17,20 @@ run() ->
 	ets:insert(my_table, {client, other_counter:new()}),
 	ets:insert(my_table, {start_time, erlang:timestamp()}),
 	diameter:start(),
-	server:start(),
-	server:listen([tcp]),
-	{ok, LogFile} = file:open('output.log', write),
+	Oh = lists:flatten(io_lib:format("~p.server.com", [Port])),
+	Or =  "server.com", % lists:flatten(io_lib:format("~p.example.com", [Port])), % "example.com", 
+	Pn = lists:flatten(io_lib:format("~p-Server-Erlang", [Port])),
+	Vid = 193, %lists:flatten(io_lib:format("~p", [Port])),
+	%{Sequence_start, Sequence_end} = case Port of 3871 -> {0, 15}; 3872 -> {16, 32} end,
+	server:start([{'Origin-Host', Oh}, 
+				  {'Origin-Realm', Or}, 
+				  {'Product-Name', Pn}, 
+				  {'Vendor-Id', Vid} %,
+				  %{sequence, {Sequence_start, Sequence_end}}
+				 ]),
+	server:listen(tcp, Port, custom),
+	Fname = lists:flatten(io_lib:format("output-~p.log", [Port])),
+	{ok, LogFile} = file:open(Fname, write),
 	spawn(fun() -> print_counts(0, LogFile) end),
 	spawn(fun() -> print_process_count() end).
 

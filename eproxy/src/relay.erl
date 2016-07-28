@@ -32,11 +32,17 @@
 
 -module(relay).
 
+-include_lib("diameter/include/diameter.hrl").
+-include_lib("diameter/include/diameter_gen_base_rfc3588.hrl").
+-include_lib("diameter/include/diameter_gen_relay.hrl").
+
 -export([start/1,
          start/2,
          listen/2,
          connect/2,
-         stop/1]).
+         connect/3,
+         stop/1,
+         handle_info/2]).
 
 -export([start/0,
          listen/1,
@@ -46,15 +52,18 @@
 -define(DEF_SVC_NAME, ?MODULE).
 
 %% The service configuration.
--define(SERVICE(Name), [{'Origin-Host', "arshad.example.com"},
-                        {'Origin-Realm', "example.com"},
+-define(SERVICE(Name), [{'Origin-Host', "pcrf.relay.com"},
+                        {'Origin-Realm', "relay.com"},
                         {'Vendor-Id', 193},
                         {'Product-Name', "RelayAgent"},
-                        {'Auth-Application-Id', [16#FFFFFFFF]},
+                        {'Auth-Application-Id', [?DIAMETER_APP_ID_RELAY]}, % 16#FFFFFFFF
                         {string_decode, false},
+						{use_shared_peers, true},
                         {application, [{alias, relay},
-                                       {dictionary, diameter_relay},
-                                       {module, relay_cb}]}]).
+                                       {dictionary, ?DIAMETER_DICT_RELAY}, % diameter_gen_relay
+                                       {module, relay_cb}]},
+						{share_peers, true}
+                       ]).
 
 %% start/1
 
@@ -83,6 +92,9 @@ listen(T) ->
 
 %% connect/2
 
+connect(T, SName, Multi) when Multi == true ->
+    node:connect(?DEF_SVC_NAME, T, SName).
+
 connect(Name, T) ->
     node:connect(Name, T).
 
@@ -96,3 +108,7 @@ stop(Name) ->
 
 stop() ->
     stop(?DEF_SVC_NAME).
+
+
+handle_info(_, State) ->
+	{noreply, State}.

@@ -84,6 +84,7 @@ start(Name, Opts)
 
 connect(Name, Opts)
   when is_list(Opts) ->
+  	io:format("~p\n", [Opts]),
     diameter:add_transport(Name, {connect, Opts});
 
 connect(Name, {T, Opts}) ->

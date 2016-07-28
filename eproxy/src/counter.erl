@@ -33,7 +33,7 @@ get(Pid) ->
 	receive 
 		V -> 
 			Curr_time = erlang:timestamp(),
-			[{_, Start_time}] = ets:lookup(my_table, start_time),
+			[{_, Start_time}] = ets:lookup(mytable_relay, start_time),
 			Tdiff = timer:now_diff(Curr_time, Start_time) / (1000 * 1000),
 			{V, V / Tdiff}
 	end.

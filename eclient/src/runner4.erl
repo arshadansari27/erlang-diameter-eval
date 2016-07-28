@@ -1,6 +1,6 @@
--module(runner).
+-module(runner4).
 
--export([run/0, one_client/0]).
+-export([run/0, one_client/0, stop/0]).
 
 run() ->
 	ets:new(mytable2, [named_table, protected, set, {keypos, 1}]),
@@ -8,8 +8,9 @@ run() ->
 	ets:insert(mytable2, {err, counter:new()}),
 	diameter:start(),
 	client:start(),
-	client:connect(tcp),
-	one_client(),
+	client:connect(tcp).
+
+stop() ->
 	client:stop(),
 	diameter:stop().
 
@@ -25,13 +26,12 @@ recurse(Count, {Ok, Er}) when Count == 0 ->
 	
 recurse(Count, {Ok, Er}) ->
 	timer:sleep((100)),
-	{R, Wht} = client:call(),
-	if 
-		R == 'ok' ->
-			{Ok2, Er2} = {Ok + 1, Er};
+	{R, Wht} = client:call(),	
+	{Ok2, Er2} = case R of
+		'ok' ->
+			 {Ok + 1, Er};
 		true ->
 			Error = lists:flatten(io_lib:format("Could not connect with reason: ~p", [Wht])),
-			throw(Error),
-			{Ok2, Er2} = {Ok, Er + 1}
+			throw(Error)
 	end,
 	recurse(Count - 1, {Ok2, Er2}).
