@@ -35,6 +35,8 @@
 
 -include_lib("diameter/include/diameter.hrl").
 -include_lib("diameter/include/diameter_gen_base_rfc3588.hrl").
+-include_lib("dict/rfc4006_cc_Gy.hrl").
+-include_lib("diameter_settings.hrl").
 
 -export([start/1,     %% start a service
          start/2,     %%
@@ -55,21 +57,21 @@
          cast/0]).
 
 -define(DEF_SVC_NAME, ?MODULE).
+-define(APP_ALIAS, ?MODULE).
+-define(DIAMETER_DICT_CCRA, rfc4006_cc_Gy).
 -define(L, atom_to_list).
-
+% -define(DIAMETER_DICT_CCRA, diameter_gen_base_rfc4006_cc).
 %% The service configuration. As in the server example, a client
 %% supporting multiple Diameter applications may or may not want to
 %% configure a common callback module on all applications.
--define(SERVICE(Name), [{'Origin-Host', "first.client.com"},
-                        {'Origin-Realm', "client.com"},
-						%{'Destination-Host', "3871.example.com"},
-                        %{'Destination-Realm', "3871.example.com"},
+-define(SERVICE(Name), [{'Origin-Host', "gxclient2.seagullPCEF2.org"},
+                        {'Origin-Realm', "seagullPCEF2.org"},
                         {'Vendor-Id', 193},
                         {'Product-Name', "Client"},
                         {'Auth-Application-Id', [0]},
                         {string_decode, false},
-                        {application, [{alias, common},
-                                       {dictionary, diameter_gen_base_rfc6733},
+                        {application, [{alias, common }, % % ?APP_ALIAS
+                                       {dictionary, diameter_gen_base_rfc6733}, %   % ?DIAMETER_DICT_CCRA
                                        {module, client_cb}]}]).
 
 %% start/1
@@ -105,6 +107,25 @@ connect(T) ->
 
 call(Name) ->
     SId = diameter:session_id(?L(Name)),
+  	CCR = #rfc4006_cc_Gy_CCR{
+        'Session-Id' = SId,
+        'Auth-Application-Id' = 4 %,
+        %'Service-Context-Id' = "gprs@diameter.com",
+        %'CC-Request-Type' = 1,
+        %'CC-Request-Number' = 0,
+        %'Subscription-Id' = [#'rfc4006_cc_Gy_Subscription-Id' {
+                                %'Subscription-Id-Type' = ?'MSISDN',
+                                %'Subscription-Id-Data' = "5511985231234" 
+                            %},
+                            %#'rfc4006_cc_Gy_Subscription-Id' {
+                                %'Subscription-Id-Type' = ?'IMSI',
+                                %'Subscription-Id-Data' = "5511985231234"
+                            %}],
+        %'Multiple-Services-Indicator' = [1]
+    },
+    io:format("REQ: ~p -> ~p\n", [SId, CCR]),
+    %diameter:call(?DEF_SVC_NAME, ?APP_ALIAS, CCR, []).
+	
     RAR = #diameter_base_RAR{'Session-Id' = SId,
                              'Auth-Application-Id' = 0,
                              'Re-Auth-Request-Type' = 0},

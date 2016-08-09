@@ -9,9 +9,7 @@
 %%
 %%     http://www.apache.org/licenses/LICENSE-2.0
 %%
-%% Unless required by applicable law or agreed to in writing, software
-%% distributed under the License is distributed on an "AS IS" BASIS,
-%% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+%% Unless required by applicable law or agreed to in writing, software %% distributed under the License is distributed on an "AS IS" BASIS, %% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 %% See the License for the specific language governing permissions and
 %% limitations under the License.
 %%
@@ -61,6 +59,8 @@
 %% [diameter:transport_opt()].
 
 -define(DEFAULT_PORT, 3868).
+-define(REMOTE_IP, {192,168,0,103}).
+-define(LOCAL_IP, {192,168,141,1}).
 
 %% ---------------------------------------------------------------------------
 %% Interface functions
@@ -156,7 +156,7 @@ client_opts({T, RA, RP}) ->
     client_opts({T, default, RA, RP});
 
 client_opts(T) ->
-    client_opts({T, loopback, loopback, ?DEFAULT_PORT}).
+    client_opts({T, local, remotelocal, ?DEFAULT_PORT}).
 
 %% ---------------------------------------------------------------------------
 
@@ -165,12 +165,26 @@ tmod(sctp) -> diameter_sctp.
 
 ip(default) ->
     [];
+
 ip(loopback) ->
     [{ip, {127,0,0,1}}];
+
+ip(local) ->
+    [{ip, ?LOCAL_IP}];
+
+ip(remotelocal) ->
+    [{ip, ?REMOTE_IP}];
+
 ip(Addr) ->
     [{ip, Addr}].
 
+addr(local) ->
+    ?LOCAL_IP;
+
 addr(loopback) ->
     {127,0,0,1};
+
+addr(remotelocal) ->
+    ?REMOTE_IP;
 addr(A) ->
     A.

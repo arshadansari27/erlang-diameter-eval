@@ -36,15 +36,13 @@
 -include_lib("diameter/include/diameter_gen_base_rfc3588.hrl").
 -include_lib("diameter/include/diameter_gen_relay.hrl").
 
--export([start/1,
+-export([start/0,
          start/2,
          listen/2,
          connect/2,
          connect/3,
          stop/1,
-         handle_info/2]).
-
--export([start/0,
+         handle_info/2,
          listen/1,
          connect/1,
          stop/0]).
@@ -52,17 +50,15 @@
 -define(DEF_SVC_NAME, ?MODULE).
 
 %% The service configuration.
--define(SERVICE(Name), [{'Origin-Host', "pcrf.relay.com"},
-                        {'Origin-Realm', "relay.com"},
+-define(SERVICE(Name), [{'Origin-Host', "gxclient.seagullPCEF.org"}, % pcrf.relay.com
+                        {'Origin-Realm', "seagullPCEF.org"}, % relay.com
                         {'Vendor-Id', 193},
                         {'Product-Name', "RelayAgent"},
                         {'Auth-Application-Id', [?DIAMETER_APP_ID_RELAY]}, % 16#FFFFFFFF
                         {string_decode, false},
-						{use_shared_peers, true},
                         {application, [{alias, relay},
                                        {dictionary, ?DIAMETER_DICT_RELAY}, % diameter_gen_relay
-                                       {module, relay_cb}]},
-						{share_peers, true}
+                                       {module, relay_cb}]}
                        ]).
 
 %% start/1

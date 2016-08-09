@@ -1,12 +1,15 @@
 -module(runner).
 
--export([run/1, run71/0, run72/0]).
+-export([run/1, run71/0, run72/0, runn/0]).
 
 run71() ->
 	run(3871).
 
 run72() ->
 	run(3872).
+
+runn() ->
+	run(3868).
 
 run(Port) ->
 	ets:new(my_table, [named_table, protected, set, {keypos, 1}]),

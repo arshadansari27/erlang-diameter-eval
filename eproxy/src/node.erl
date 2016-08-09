@@ -65,6 +65,8 @@
 -define(SERVER_PORT, 3868).
 -define(SERVER_PORT1, 3871).
 -define(SERVER_PORT2, 3872).
+-define(REMOTE_IP, {192,168,141,128}).
+-define(LOCAL_IP, {0,0,0,0}).
 
 %% ---------------------------------------------------------------------------
 %% Interface functions
@@ -135,14 +137,14 @@ stop(Name) ->
 %%
 %% Return transport options for a listening transport.
 
-server_opts({T, Addr, Port}) ->
+server_opts({T, _, Port}) ->
     [{transport_module, tmod(T)},
      {transport_config, [{reuseaddr, true},
-                         {ip, addr(Addr)},
+                         {ip, addr(local)},
                          {port, Port}]}];
 
 server_opts(T) ->
-    server_opts({T, loopback, ?RELAY_PORT}).
+    server_opts({T, local, ?RELAY_PORT}).
 
 %% client_opts/1
 %%
@@ -163,10 +165,11 @@ client_opts({T, LA, RA, RP}) ->
 
 client_opts({T, S_Port, Multi}) when Multi == true ->
 	Port = case S_Port of 
+		0 -> ?SERVER_PORT;
 		1 -> ?SERVER_PORT1;
 		2 -> ?SERVER_PORT2
 	end,
-    client_opts({T, loopback, remotelocal, Port});
+    client_opts({T, local, remotelocal, Port});
 
 
 client_opts({T, RA, RP}) ->
@@ -182,19 +185,26 @@ tmod(sctp) -> diameter_sctp.
 
 ip(default) ->
     [];
+
 ip(loopback) ->
     [{ip, {127,0,0,1}}];
 
+ip(local) ->
+    [{ip, ?LOCAL_IP}];
+
 ip(remotelocal) ->
-    {172,16,101,146};
+    [{ip, ?REMOTE_IP}];
 
 ip(Addr) ->
     [{ip, Addr}].
+
+addr(local) ->
+    ?LOCAL_IP;
 
 addr(loopback) ->
     {127,0,0,1};
 
 addr(remotelocal) ->
-    {172,16,101,146};
+    ?REMOTE_IP;
 addr(A) ->
     A.
