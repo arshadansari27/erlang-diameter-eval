@@ -71,7 +71,7 @@
                         {'Auth-Application-Id', [0]},
                         {string_decode, false},
                         {application, [{alias, common }, % % ?APP_ALIAS
-                                       {dictionary, diameter_gen_base_rfc6733}, %   % ?DIAMETER_DICT_CCRA
+                                       {dictionary, ?DIAMETER_DICT_CCRA}, %   % diameter_gen_base_rfc6733
                                        {module, client_cb}]}]).
 
 %% start/1
@@ -109,27 +109,27 @@ call(Name) ->
     SId = diameter:session_id(?L(Name)),
   	CCR = #rfc4006_cc_Gy_CCR{
         'Session-Id' = SId,
-        'Auth-Application-Id' = 4 %,
-        %'Service-Context-Id' = "gprs@diameter.com",
-        %'CC-Request-Type' = 1,
-        %'CC-Request-Number' = 0,
-        %'Subscription-Id' = [#'rfc4006_cc_Gy_Subscription-Id' {
-                                %'Subscription-Id-Type' = ?'MSISDN',
-                                %'Subscription-Id-Data' = "5511985231234" 
-                            %},
-                            %#'rfc4006_cc_Gy_Subscription-Id' {
-                                %'Subscription-Id-Type' = ?'IMSI',
-                                %'Subscription-Id-Data' = "5511985231234"
-                            %}],
-        %'Multiple-Services-Indicator' = [1]
+        'Auth-Application-Id' = 4 ,
+        'Service-Context-Id' = "gprs@diameter.com",
+        'CC-Request-Type' = 1,
+        'CC-Request-Number' = 0,
+        'Subscription-Id' = [#'rfc4006_cc_Gy_Subscription-Id' {
+                                'Subscription-Id-Type' = ?'MSISDN',
+                                'Subscription-Id-Data' = "5511985231234" 
+                            },
+                            #'rfc4006_cc_Gy_Subscription-Id' {
+                                'Subscription-Id-Type' = ?'IMSI',
+                                'Subscription-Id-Data' = "5511985231234"
+                            }],
+        'Multiple-Services-Indicator' = [1]
     },
     io:format("REQ: ~p -> ~p\n", [SId, CCR]),
-    %diameter:call(?DEF_SVC_NAME, ?APP_ALIAS, CCR, []).
+    diameter:call(?DEF_SVC_NAME, ?APP_ALIAS, CCR, []).
 	
-    RAR = #diameter_base_RAR{'Session-Id' = SId,
-                             'Auth-Application-Id' = 0,
-                             'Re-Auth-Request-Type' = 0},
-    diameter:call(Name, common, RAR, []).
+    %RAR = #diameter_base_RAR{'Session-Id' = SId,
+    %                         'Auth-Application-Id' = 0,
+    %                         'Re-Auth-Request-Type' = 0},
+    %diameter:call(Name, common, RAR, []).
 
 call() ->
     call(?DEF_SVC_NAME).
@@ -138,10 +138,28 @@ call() ->
 
 cast(Name) ->
     SId = diameter:session_id(?L(Name)),
-    RAR = ['RAR', {'Session-Id', SId},
-                  {'Auth-Application-Id', 0},
-                  {'Re-Auth-Request-Type', 1}],
-    diameter:call(Name, common, RAR, [detach]).
+    %RAR = ['RAR', {'Session-Id', SId},
+    %              {'Auth-Application-Id', 0},
+    %              {'Re-Auth-Request-Type', 1}],
+    %diameter:call(Name, common, RAR, [detach]).
+    CCR = #rfc4006_cc_Gy_CCR{
+        'Session-Id' = SId,
+        'Auth-Application-Id' = 4 ,
+        'Service-Context-Id' = "gprs@diameter.com",
+        'CC-Request-Type' = 1,
+        'CC-Request-Number' = 0,
+        'Subscription-Id' = [#'rfc4006_cc_Gy_Subscription-Id' {
+                                'Subscription-Id-Type' = ?'MSISDN',
+                                'Subscription-Id-Data' = "5511985231234" 
+                            },
+                            #'rfc4006_cc_Gy_Subscription-Id' {
+                                'Subscription-Id-Type' = ?'IMSI',
+                                'Subscription-Id-Data' = "5511985231234"
+                            }],
+        'Multiple-Services-Indicator' = [1]
+    },
+    io:format("REQ2: ~p -> ~p\n", [SId, CCR]),
+    diameter:call(?DEF_SVC_NAME, ?APP_ALIAS, CCR, [detach]).
 
 cast() ->
     cast(?DEF_SVC_NAME).

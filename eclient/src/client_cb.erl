@@ -65,30 +65,20 @@ prepare_request(#diameter_packet{msg = ['RAR' = T | Avps]}, _, {_, Caps}) ->
                {'Destination-Realm', DR}
              | Avps]};
 
-%prepare_request(#diameter_packet{msg = Rec}, _, {_, Caps}) ->
-    %#diameter_caps{origin_host = {OH, DH},
-                   %origin_realm = {OR, DR}}
-        %= Caps,
-%
-    %{send, Rec#diameter_base_RAR{'Origin-Host' = OH,
-                                 %'Origin-Realm' = OR,
-                                 %'Destination-Host' = DH,
-                                 %'Destination-Realm' = DR}}.
-
 prepare_request(#diameter_packet{msg = Rec}, _, {_, Caps}) ->
     #diameter_caps{origin_host = {OH, DH},
                    origin_realm = {OR, DR}
     } = Caps,
 
-    %{send, Rec#rfc4006_cc_Gy_CCR{'Origin-Host' = OH,
-                              %'Origin-Realm' = OR,
-                              %'Destination-Host' = [DH],
-                              %'Destination-Realm' = DR}}.
+    {send, Rec#rfc4006_cc_Gy_CCR{'Origin-Host' = OH,
+                              'Origin-Realm' = OR,
+                              'Destination-Host' = [DH],
+                              'Destination-Realm' = DR}}.
     
-    {send, Rec#diameter_base_RAR{'Origin-Host' = OH,
-                                 'Origin-Realm' = OR,
-                                 'Destination-Host' = DH,
-                                 'Destination-Realm' = DR}}.
+    %{send, Rec#diameter_base_RAR{'Origin-Host' = OH,
+                                 %'Origin-Realm' = OR,
+                                 %'Destination-Host' = DH,
+                                 %'Destination-Realm' = DR}}.
 
 %% prepare_retransmit/3
 
