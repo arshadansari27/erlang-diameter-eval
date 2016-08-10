@@ -1,28 +1,8 @@
-%%
-%% %CopyrightBegin%
-%%
-%% Copyright Ericsson AB 2010-2016. All Rights Reserved.
-%%
-%% Licensed under the Apache License, Version 2.0 (the "License");
-%% you may not use this file except in compliance with the License.
-%% You may obtain a copy of the License at
-%%
-%%     http://www.apache.org/licenses/LICENSE-2.0
-%%
-%% Unless required by applicable law or agreed to in writing, software
-%% distributed under the License is distributed on an "AS IS" BASIS,
-%% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-%% See the License for the specific language governing permissions and
-%% limitations under the License.
-%%
-%% %CopyrightEnd%
-%%
-
 -module(client_cb).
 
 -include_lib("diameter/include/diameter.hrl").
 -include_lib("diameter/include/diameter_gen_base_rfc3588.hrl").
--include_lib("dict/rfc4006_cc_Gy.hrl").
+-include_lib("dict/rfc4006_cc.hrl").
 
 %% diameter callbacks
 -export([peer_up/3,
@@ -34,8 +14,6 @@
          handle_error/4,
          handle_request/3]).
 
-
--define(DIAMETER_DICT_CCRA, diameter_gen_base_rfc4006_cc).
 
 %% peer_up/3
 
@@ -66,19 +44,20 @@ prepare_request(#diameter_packet{msg = ['RAR' = T | Avps]}, _, {_, Caps}) ->
              | Avps]};
 
 prepare_request(#diameter_packet{msg = Rec}, _, {_, Caps}) ->
+	io:format("Preparing Request"),
     #diameter_caps{origin_host = {OH, DH},
                    origin_realm = {OR, DR}
     } = Caps,
 
-    {send, Rec#rfc4006_cc_Gy_CCR{'Origin-Host' = OH,
-                              'Origin-Realm' = OR,
-                              'Destination-Host' = [DH],
-                              'Destination-Realm' = DR}}.
+    %{send, Rec#rfc4006_cc_CCR{'Origin-Host' = OH,
+    %                          'Origin-Realm' = OR,
+    %                          'Destination-Host' = [DH],
+    %                          'Destination-Realm' = DR}}.
     
-    %{send, Rec#diameter_base_RAR{'Origin-Host' = OH,
-                                 %'Origin-Realm' = OR,
-                                 %'Destination-Host' = DH,
-                                 %'Destination-Realm' = DR}}.
+    {send, Rec#diameter_base_RAR{'Origin-Host' = OH,
+                                 'Origin-Realm' = OR,
+                                 'Destination-Host' = DH,
+                                 'Destination-Realm' = DR}}.
 
 %% prepare_retransmit/3
 
@@ -88,22 +67,16 @@ prepare_retransmit(Packet, SvcName, Peer) ->
 %% handle_answer/4
 
 handle_answer(#diameter_packet{msg = Msg}, _Request, _SvcName, _Peer) ->
-	[{_, Ok_counter}] = ets:lookup(mytable2, ok),
-	counter:inc(Ok_counter),
 	io:format("Response: ~p\n", [Msg]),
     {ok, Msg}.
 
 %% handle_error/4
 
 handle_error(Reason, _Request, _SvcName, _Peer) ->
-	%[{_, Err_counter}] = ets:lookup(mytable2, err),
-	%counter:inc(Err_counter),
     {error, Reason}.
 
 %% handle_request/3
 
 handle_request(_Packet, _SvcName, _Peer) ->
-	%[{_, Err_counter}] = ets:lookup(mytable2, ok),
-	%counter:inc(Err_counter),
-    %erlang:error({unexpected, ?MODULE, ?LINE}).
-    _Packet.
+	io:format("Handle_request\n"),
+    erlang:error({unexpected, ?MODULE, ?LINE}).

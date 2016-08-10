@@ -59,8 +59,11 @@
 %% [diameter:transport_opt()].
 
 -define(DEFAULT_PORT, 3868).
--define(REMOTE_IP, {192,168,0,103}).
+%-define(REMOTE_IP, {192,168,0,103}).
+%-define(LOCAL_IP, {192,168,0,103}).
+-define(REMOTE_IP, {192,168,141,1}).
 -define(LOCAL_IP, {192,168,141,1}).
+%-define(LOCAL_IP, {127,0,0,1}).
 
 %% ---------------------------------------------------------------------------
 %% Interface functions
@@ -156,7 +159,7 @@ client_opts({T, RA, RP}) ->
     client_opts({T, default, RA, RP});
 
 client_opts(T) ->
-    client_opts({T, local, remotelocal, ?DEFAULT_PORT}).
+    client_opts({T, local, remote, ?DEFAULT_PORT}).
 
 %% ---------------------------------------------------------------------------
 
@@ -172,7 +175,7 @@ ip(loopback) ->
 ip(local) ->
     [{ip, ?LOCAL_IP}];
 
-ip(remotelocal) ->
+ip(remote) ->
     [{ip, ?REMOTE_IP}];
 
 ip(Addr) ->
@@ -184,7 +187,7 @@ addr(local) ->
 addr(loopback) ->
     {127,0,0,1};
 
-addr(remotelocal) ->
+addr(remote) ->
     ?REMOTE_IP;
 addr(A) ->
     A.

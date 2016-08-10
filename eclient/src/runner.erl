@@ -8,7 +8,8 @@ run() ->
 	ets:insert(mytable2, {err, counter:new()}),
 	diameter:start(),
 	client:start(),
-	client:connect(tcp),
+	{X, Y} = client:connect(tcp),
+	io:format("Connection ~p ~p\n", [X, Y]),
 	one_client(),
 	client:stop(),
 	diameter:stop().

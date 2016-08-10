@@ -6,10 +6,10 @@ init() ->
 	ets:new(mytable2, [named_table, protected, set, {keypos, 1}]),
 	ets:insert(mytable2, {ok, counter:new()}),
 	ets:insert(mytable2, {err, counter:new()}),
-	%dbg:tracer(),
-	%dbg:p(all, call),
-	%dbg:tp(diameter, add_transport, cx),
-	%dbg:tp(node, connect, cx),
+	dbg:tracer(),
+	dbg:p(all, call),
+	dbg:tp(diameter, add_transport, cx),
+	dbg:tp(node, connect, cx),
 	connect().
 
 connect() ->
