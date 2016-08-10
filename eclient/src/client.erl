@@ -18,23 +18,22 @@
          cast/0]).
 
 -define(DEF_SVC_NAME, ?MODULE).
--define(APP_ALIAS, common). % ?MODULE
+-define(APP_ALIAS, ?MODULE). % common
 -define(L, atom_to_list).
--define(DIAMETER_DICT_CCRA, diameter_gen_base_rfc6733  ). % rfc4006_cc
--define(DCCA_APPLICATION_ID, 0). % 4 4294967295 16777238
--define(ORIGIN_HOST, "gxclient2.seagullPCEF2.org").
--define(ORIGIN_REALM, "seagullPCEF2.org").
--define(CONTEXT_ID, "gprs@diameter.com").
+-define(DIAMETER_DICT_CCRA, rfc4006_cc ). % diameter_gen_base_rfc6733  
+-define(DCCA_APPLICATION_ID, 4). % 4 16777238 4294967295
+-define(CONTEXT_ID, "gprs@seagullPCEF2.org").
 %-define(DIAMETER_DICT_CCRA, diameter_gen_base_rfc4006_cc).
 %% The service configuration. As in the server example, a client
 %% supporting multiple Diameter applications may or may not want to
 %% configure a common callback module on all applications.
 -define(SERVICE(Name), [{'Origin-Host', "gxclient2.seagullPCEF2.org"},
                         {'Origin-Realm', "seagullPCEF2.org"},
-                        {'Vendor-Id', 193},
-                        {'Product-Name', "Client"},
-                        {'Auth-Application-Id', [?DCCA_APPLICATION_ID]},
-                        {string_decode, false},
+                        {'Destination-Realm', "alepoPCRF.aaa"},
+                        {'Vendor-Id', 9999},
+                        {'Product-Name', "cc_erl_client"},
+                        {'Auth-Application-Id', ?DCCA_APPLICATION_ID},
+                        {'Acct-Application-Id', ?DCCA_APPLICATION_ID},
                         {application, [{alias, ?APP_ALIAS}, 
                                        {dictionary, ?DIAMETER_DICT_CCRA},
                                        {module, client_cb}]}]).
@@ -71,26 +70,26 @@ connect(T) ->
 %% call/1
 
 call(Name) ->
-    SId = diameter:session_id(?L(Name)),
-  	%CCR = #rfc4006_cc_CCR{
-        %'Session-Id' = SId,
-        %'Auth-Application-Id' = ?DCCA_APPLICATION_ID,
-        %'Service-Context-Id' = "gprs@diameter.com",
-        %'CC-Request-Type' = 1,
-        %'CC-Request-Number' = 0,
-        %'Subscription-Id' = [#'rfc4006_cc_Subscription-Id' {
-                                %'Subscription-Id-Type' = "1",
-                                %'Subscription-Id-Data' = "5511985231234" 
-                            %}],
-        %'Multiple-Services-Indicator' = [1]
-    %},
-	%io:format("Calling now..~p\n", [CCR]),
-    %diameter:call(?DEF_SVC_NAME, ?APP_ALIAS, CCR, []).
+    diameter:session_id(?L(Name)),
+    SId = "gxclient2.seagullPCEF2.org;1470821454;1",  
+  	CCR = #rfc4006_cc_CCR{
+        'Session-Id' = SId,
+        'Auth-Application-Id' = ?DCCA_APPLICATION_ID,
+        'Service-Context-Id' = "gprs@seagullPCEF2.org",
+        'CC-Request-Type' = 1,
+        'CC-Request-Number' = 0,
+        'Subscription-Id' = [#'rfc4006_cc_Subscription-Id' {
+                                'Subscription-Id-Type' = 1,
+                                'Subscription-Id-Data' = "5511985231234" 
+                            }],
+        'Multiple-Services-Indicator' = [1]
+    },
+    diameter:call(?DEF_SVC_NAME, ?APP_ALIAS, CCR, []).
 	
-    RAR = #diameter_base_RAR{'Session-Id' = SId,
-                             'Auth-Application-Id' = 0,
-                             'Re-Auth-Request-Type' = 0},
-    diameter:call(Name, common, RAR, []).
+    %RAR = #diameter_base_RAR{'Session-Id' = SId,
+                             %'Auth-Application-Id' = 0,
+                             %'Re-Auth-Request-Type' = 0},
+    %diameter:call(Name, common, RAR, []).
 
 call() ->
     call(?DEF_SVC_NAME).
@@ -98,25 +97,26 @@ call() ->
 %% cast/1
 
 cast(Name) ->
-    SId = diameter:session_id(?L(Name)),
-    RAR = ['RAR', {'Session-Id', SId},
-                  {'Auth-Application-Id', 0},
-                  {'Re-Auth-Request-Type', 1}],
-    diameter:call(Name, common, RAR, [detach]).
-    %CCR = #rfc4006_cc_CCR{
-        %'Session-Id' = SId,
-        %'Auth-Application-Id' = ?DCCA_APPLICATION_ID,
-        %'Service-Context-Id' = "gprs@diameter.com",
-        %'CC-Request-Type' = 1,
-        %'CC-Request-Number' = 0,
-        %'Subscription-Id' = [#'rfc4006_cc_Subscription-Id' {
-                                %'Subscription-Id-Type' = "1",
-                                %'Subscription-Id-Data' = "5511985231234" 
-                            %}],
-        %'Multiple-Services-Indicator' = [1]
-    %},
-    %io:format("REQ2: ~p -> ~p\n", [SId, CCR]),
-    %diameter:call(?DEF_SVC_NAME, ?APP_ALIAS, CCR, [detach]).
+    diameter:session_id(?L(Name)),
+    SId = "gxclient2.seagullPCEF2.org;1470821454;1",  
+    %RAR = ['RAR', {'Session-Id', SId},
+                  %{'Auth-Application-Id', 0},
+                  %{'Re-Auth-Request-Type', 1}],
+    %diameter:call(Name, common, RAR, [detach]).
+    CCR = #rfc4006_cc_CCR{
+        'Session-Id' = SId,
+        'Auth-Application-Id' = ?DCCA_APPLICATION_ID,
+        'Service-Context-Id' = "gprs@diameter.com",
+        'CC-Request-Type' = 1,
+        'CC-Request-Number' = 0,
+        'Subscription-Id' = [#'rfc4006_cc_Subscription-Id' {
+                                'Subscription-Id-Type' = 1,
+                                'Subscription-Id-Data' = "5511985231234" 
+                            }],
+        'Multiple-Services-Indicator' = [1]
+    },
+    io:format("REQ2: ~p -> ~p\n", [SId, CCR]),
+    diameter:call(?DEF_SVC_NAME, ?APP_ALIAS, CCR, [detach]).
 
 cast() ->
     cast(?DEF_SVC_NAME).

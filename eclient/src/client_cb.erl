@@ -49,15 +49,15 @@ prepare_request(#diameter_packet{msg = Rec}, _, {_, Caps}) ->
                    origin_realm = {OR, DR}
     } = Caps,
 
-    %{send, Rec#rfc4006_cc_CCR{'Origin-Host' = OH,
-    %                          'Origin-Realm' = OR,
-    %                          'Destination-Host' = [DH],
-    %                          'Destination-Realm' = DR}}.
+    {send, Rec#rfc4006_cc_CCR{'Origin-Host' = OH,
+                              'Origin-Realm' = OR,
+                              'Destination-Host' = [DH],
+                              'Destination-Realm' = DR}}.
     
-    {send, Rec#diameter_base_RAR{'Origin-Host' = OH,
-                                 'Origin-Realm' = OR,
-                                 'Destination-Host' = DH,
-                                 'Destination-Realm' = DR}}.
+    %{send, Rec#diameter_base_RAR{'Origin-Host' = OH,
+    %                             'Origin-Realm' = OR,
+    %                             'Destination-Host' = DH,
+    %                             'Destination-Realm' = DR}}.
 
 %% prepare_retransmit/3
 

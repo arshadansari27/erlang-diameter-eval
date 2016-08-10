@@ -59,11 +59,9 @@
 %% [diameter:transport_opt()].
 
 -define(DEFAULT_PORT, 3868).
-%-define(REMOTE_IP, {192,168,0,103}).
-%-define(LOCAL_IP, {192,168,0,103}).
+%-define(REMOTE_IP, {0,0,0,0}).
 -define(REMOTE_IP, {192,168,141,1}).
 -define(LOCAL_IP, {192,168,141,1}).
-%-define(LOCAL_IP, {127,0,0,1}).
 
 %% ---------------------------------------------------------------------------
 %% Interface functions

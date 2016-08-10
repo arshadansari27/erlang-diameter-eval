@@ -65,7 +65,8 @@
 -define(SERVER_PORT, 3868).
 -define(SERVER_PORT1, 3871).
 -define(SERVER_PORT2, 3872).
--define(REMOTE_IP, {192,168,141,128}).
+-define(REMOTE_IP1, {192,168,141,128}).
+-define(REMOTE_IP2, {192,168,141,129}).
 -define(LOCAL_IP, {0,0,0,0}).
 
 %% ---------------------------------------------------------------------------
@@ -163,13 +164,12 @@ client_opts({T, LA, RA, RP}) ->
                          {reuseaddr, true}
                          | ip(LA)]}];
 
-client_opts({T, S_Port, Multi}) when Multi == true ->
-	Port = case S_Port of 
-		0 -> ?SERVER_PORT;
-		1 -> ?SERVER_PORT1;
-		2 -> ?SERVER_PORT2
+client_opts({T, SNum, Multi}) when Multi == true ->
+	Snum = case SNum of 
+		1 -> remote1;
+		2 -> remote2
 	end,
-    client_opts({T, local, remotelocal, Port});
+    client_opts({T, local, Snum, ?SERVER_PORT});
 
 
 client_opts({T, RA, RP}) ->
@@ -192,8 +192,11 @@ ip(loopback) ->
 ip(local) ->
     [{ip, ?LOCAL_IP}];
 
-ip(remotelocal) ->
-    [{ip, ?REMOTE_IP}];
+ip(remote1) ->
+    [{ip, ?REMOTE_IP1}];
+
+ip(remote2) ->
+    [{ip, ?REMOTE_IP2}];
 
 ip(Addr) ->
     [{ip, Addr}].
@@ -204,7 +207,11 @@ addr(local) ->
 addr(loopback) ->
     {127,0,0,1};
 
-addr(remotelocal) ->
-    ?REMOTE_IP;
+addr(remote1) ->
+    ?REMOTE_IP1;
+
+addr(remote2) ->
+    ?REMOTE_IP2;
+
 addr(A) ->
     A.

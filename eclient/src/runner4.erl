@@ -1,6 +1,6 @@
 -module(runner4).
 
--export([run/0, init/0, stop/0, connect/0]).
+-export([run/0]).
 
 init() ->
 	ets:new(mytable2, [named_table, protected, set, {keypos, 1}]),
@@ -15,8 +15,8 @@ init() ->
 connect() ->
 	diameter:start(),
 	client:start(),
-	timer:sleep((1000)),
 	Xval = client:connect(tcp),
+	timer:sleep((1000)),
 	io:format("Connect response: ~p\n", [Xval]).
 
 stop() ->
@@ -24,8 +24,11 @@ stop() ->
 	diameter:stop().
 
 run() ->
+	init(),
 	timer:sleep((1000)),
 	{R, Wht} = client:call(),	
-	io:format("Response: ~p\n~p\n", [R, Wht]).
+	io:format("Response: ~p\n~p\n", [R, Wht]),
+	timer:sleep((1000)),
+	stop().
 
 
